@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { 
   Home, QrCode, User, Flame, Swords, ShieldCheck, CalendarDays, Bell,
-  CheckCircle2, Clock, TrendingUp, Sparkles, MessageCircle, Zap,
+  CheckCircle2, Clock, TrendingUp, Sparkles, Zap,
   LogOut, UserPlus, Check, X, Shuffle, Camera, Palette, 
-  Keyboard, Loader2
+  Keyboard, Loader2, Lock, Trophy, GraduationCap, ChevronRight
 } from "lucide-react";
 
 const prefixes = ["Swift", "Mighty", "Clever", "Silent", "Brave", "Cosmic"];
@@ -15,22 +15,22 @@ const suffixes = ["Fox", "Panda", "Tiger", "Wolf", "Owl", "Dragon"];
 export default function App() {
   const [currentTab, setCurrentTab] = useState<"dashboard" | "profile" | "scan">("dashboard");
   const [theme, setTheme] = useState("indigo");
-  
-  // 1. STATE FOR THE LIVE LECTURE (To be replaced by Django backend)
   const [isSessionLive, setIsSessionLive] = useState(false);
 
-  const themeColors: Record<string, { bg: string, text: string, hover: string, border: string, lightBg: string, lightText: string }> = {
-    indigo: { bg: "bg-indigo-600", text: "text-indigo-700", hover: "hover:bg-indigo-700", border: "border-indigo-700", lightBg: "bg-indigo-50", lightText: "text-indigo-600" },
-    emerald: { bg: "bg-emerald-600", text: "text-emerald-700", hover: "hover:bg-emerald-700", border: "border-emerald-700", lightBg: "bg-emerald-50", lightText: "text-emerald-600" },
-    rose: { bg: "bg-rose-600", text: "text-rose-700", hover: "hover:bg-rose-700", border: "border-rose-700", lightBg: "bg-rose-50", lightText: "text-rose-600" },
-    blue: { bg: "bg-blue-600", text: "text-blue-700", hover: "hover:bg-blue-700", border: "border-blue-700", lightBg: "bg-blue-50", lightText: "text-blue-600" },
-    orange: { bg: "bg-orange-600", text: "text-orange-700", hover: "hover:bg-orange-700", border: "border-orange-700", lightBg: "bg-orange-50", lightText: "text-orange-600" },
+  const themeColors: Record<string, { bg: string, text: string, hover: string, border: string }> = {
+    indigo: { bg: "bg-indigo-600", text: "text-indigo-700", hover: "hover:bg-indigo-700", border: "border-indigo-700" },
+    emerald: { bg: "bg-emerald-600", text: "text-emerald-700", hover: "hover:bg-emerald-700", border: "border-emerald-700" },
+    rose: { bg: "bg-rose-600", text: "text-rose-700", hover: "hover:bg-rose-700", border: "border-rose-700" },
+    blue: { bg: "bg-blue-600", text: "text-blue-700", hover: "hover:bg-blue-700", border: "border-blue-700" },
+    orange: { bg: "bg-orange-600", text: "text-orange-700", hover: "hover:bg-orange-700", border: "border-orange-700" },
   };
   const activeTheme = themeColors[theme];
 
-  const student = {
+  const [student, setStudent] = useState({
     name: "Abinbire Simon",
+    index: "21153709",
     classGroup: "Class C",
+    programme: "BSC. Information Technology",
     avatar: "https://api.dicebear.com/7.x/adventurer/svg?seed=Simon&backgroundColor=b6e3f4",
     mainStreak: 8,
     marksTarget: 10,
@@ -50,7 +50,14 @@ export default function App() {
     totalPresent: 45,
     totalLate: 2,
     totalAbsent: 3,
-  };
+    badges: [
+      { id: 1, name: "First Streak", icon: "🔥", unlocked: true },
+      { id: 2, name: "Perfect Week", icon: "🏆", unlocked: true },
+      { id: 3, name: "Early Bird", icon: "🌅", unlocked: true },
+      { id: 4, name: "10 Streak", icon: "⚡", unlocked: false, req: "10 Sessions in a row" },
+      { id: 5, name: "Class MVP", icon: "👑", unlocked: false, req: "Top 3 in class" },
+    ],
+  });
 
   const [username, setUsername] = useState("SimonTheGreat");
 
@@ -109,7 +116,7 @@ export default function App() {
   return (
     <div className="min-h-screen bg-slate-50 font-sans pb-24 md:pb-0">
       
-      {/* TOP NAVIGATION (Desktop) */}
+      {/* TOP NAVIGATION */}
       <header className="hidden md:flex bg-white border-b border-slate-200 px-8 py-4 justify-between items-center sticky top-0 z-50 shadow-sm">
         <div className={`flex items-center gap-2 ${activeTheme.text} font-bold text-xl cursor-pointer`} onClick={() => setCurrentTab("dashboard")}>
           <ShieldCheck size={28} />
@@ -131,8 +138,6 @@ export default function App() {
       {/* --- DASHBOARD TAB --- */}
       {currentTab === "dashboard" && (
         <main className="max-w-6xl mx-auto p-5 md:p-8">
-          
-          {/* Mobile Header */}
           <div className="md:hidden flex justify-between items-center mb-6 pt-4">
             <div>
               <p className="text-slate-600 text-sm font-medium">Welcome back,</p>
@@ -143,7 +148,6 @@ export default function App() {
             </button>
           </div>
 
-          {/* Desktop Header */}
           <div className="hidden md:flex justify-between items-end mb-8">
             <div>
               <h1 className="text-3xl font-bold text-slate-900">Welcome back, {student.name.split(' ')[1]} 👋</h1>
@@ -153,14 +157,9 @@ export default function App() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            
-            {/* LEFT COLUMN (Streak, Actions, Activity) */}
             <div className="md:col-span-2 space-y-6">
-              
-              {/* STREAK CARD */}
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="bg-gradient-to-br from-orange-500 to-red-600 rounded-[2rem] p-6 md:p-8 text-white shadow-2xl shadow-orange-500/30 relative overflow-hidden">
                 <div className="absolute -right-10 -top-10 w-40 h-40 bg-white/10 rounded-full blur-2xl"></div>
-                
                 <div className="flex justify-between items-start mb-8">
                   <div>
                     <p className="text-orange-100 font-bold text-xs md:text-sm uppercase tracking-widest mb-1">Current Streak</p>
@@ -173,7 +172,6 @@ export default function App() {
                     <Flame size={44} className="text-white fill-white drop-shadow-md" />
                   </motion.div>
                 </div>
-
                 <div className="space-y-2 mt-8">
                   <div className="flex justify-between text-xs text-orange-100 font-bold uppercase tracking-wider">
                     <span>Progress to Marks</span>
@@ -190,10 +188,7 @@ export default function App() {
                 </div>
               </motion.div>
 
-              {/* QUICK ACTIONS GRID */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                
-                {/* DYNAMIC SCAN BUTTON */}
                 <button onClick={() => isSessionLive ? setCurrentTab("scan") : alert("No active session right now!")} className="text-left h-full group">
                   {isSessionLive ? (
                     <div className="bg-gradient-to-br from-orange-500 to-red-600 hover:from-orange-400 hover:to-red-500 transition-all duration-300 rounded-[2rem] p-6 flex items-center gap-5 shadow-xl shadow-orange-600/30 text-white h-full relative overflow-hidden animate-pulse">
@@ -223,7 +218,6 @@ export default function App() {
                   )}
                 </button>
 
-                {/* RIVALRY CARD */}
                 <div className="bg-white border border-slate-200 rounded-[2rem] p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow">
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-2">
@@ -244,10 +238,8 @@ export default function App() {
                     </div>
                   </div>
                 </div>
-
               </div>
 
-              {/* RECENT ACTIVITY */}
               <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200">
                 <div className="flex justify-between items-center mb-6">
                   <h3 className="font-bold text-slate-900 text-lg">Recent Activity</h3>
@@ -272,13 +264,9 @@ export default function App() {
                   ))}
                 </div>
               </div>
-
             </div>
 
-            {/* RIGHT COLUMN (Bonus, Schedule, Team Streak) */}
             <div className="space-y-6">
-              
-              {/* BONUS QUESTIONS */}
               {student.bonusQuestions > 0 && (
                 <div className="bg-gradient-to-br from-yellow-400 to-orange-500 rounded-[2rem] p-6 shadow-xl shadow-orange-500/20 text-white relative overflow-hidden">
                   <Sparkles className="absolute -right-4 -top-4 text-white/20" size={80} />
@@ -292,14 +280,12 @@ export default function App() {
                 </div>
               )}
 
-              {/* SCHEDULE */}
               <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200">
                 <div className="flex items-center justify-between mb-6">
                    <h3 className="font-bold text-slate-900 text-lg flex items-center gap-2">
                      <CalendarDays size={20} className="text-blue-600"/> Today's Classes
                    </h3>
                 </div>
-                
                 <div className="space-y-4">
                   {student.schedule.map((item) => (
                     <div key={item.id} className={`p-4 rounded-2xl border ${item.status === 'next' ? 'border-indigo-200 bg-indigo-50/50' : 'border-slate-100 bg-slate-50'}`}>
@@ -313,7 +299,6 @@ export default function App() {
                 </div>
               </div>
 
-              {/* TEAM STREAK */}
               <div className="bg-white rounded-[2rem] p-6 shadow-sm border border-slate-200">
                 <div className="flex items-center justify-between mb-4">
                    <h3 className="font-bold text-slate-900 flex items-center gap-2">
@@ -330,9 +315,7 @@ export default function App() {
                   <TrendingUp size={14} /> 88% checked in last time.
                 </div>
               </div>
-
             </div>
-
           </div>
         </main>
       )}
@@ -340,39 +323,106 @@ export default function App() {
       {/* --- PROFILE TAB --- */}
       {currentTab === "profile" && (
         <main className="max-w-4xl mx-auto p-5 md:p-8">
-          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 flex flex-col md:flex-row items-center gap-6 mb-6">
+          <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-slate-200 flex flex-col md:flex-row items-center gap-6 mb-8">
             <div className="h-28 w-28 bg-slate-50 rounded-full flex items-center justify-center overflow-hidden border-4 border-white shadow-lg relative">
               <img src={student.avatar} alt="Avatar" className="w-full h-full object-cover" />
+              <div className="absolute bottom-1 right-1 h-5 w-5 bg-emerald-500 border-2 border-white rounded-full"></div>
             </div>
             <div className="text-center md:text-left flex-1">
               <h1 className="text-2xl md:text-3xl font-bold text-slate-900">{student.name}</h1>
               <div className="flex items-center justify-center md:justify-start gap-2 mt-1">
                 <p className={`${activeTheme.text} font-bold text-lg`}>@{username}</p>
-                <button onClick={generateNewName} className="text-slate-500 hover:text-slate-900 p-1"><Shuffle size={16} /></button>
+                <button onClick={generateNewName} className="text-slate-500 hover:text-slate-900 p-1" title="Generate new username">
+                  <Shuffle size={16} />
+                </button>
               </div>
-              <p className="text-slate-700 font-medium text-sm mt-1">21153709 • {student.classGroup}</p>
+              <p className="text-slate-600 font-medium text-sm mt-1">{student.index} • {student.classGroup}</p>
+              <div className="mt-3 inline-flex items-center gap-2 bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-bold border border-blue-200">
+                <GraduationCap size={16} />
+                {student.programme}
+              </div>
             </div>
+            <button className="bg-slate-100 hover:bg-slate-200 text-slate-800 px-6 py-2.5 rounded-xl font-bold transition-colors">
+              Edit Profile
+            </button>
+          </div>
+
+          <h2 className="text-lg font-bold text-slate-900 mb-3 ml-2">Attendance Overview</h2>
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            <div className="bg-white p-4 rounded-3xl border border-slate-200 text-center shadow-sm">
+              <p className="text-emerald-600 font-black text-3xl">{student.totalPresent}</p>
+              <p className="text-xs text-slate-600 font-bold uppercase tracking-wider mt-1">Present</p>
+            </div>
+            <div className="bg-white p-4 rounded-3xl border border-slate-200 text-center shadow-sm">
+              <p className="text-orange-600 font-black text-3xl">{student.totalLate}</p>
+              <p className="text-xs text-slate-600 font-bold uppercase tracking-wider mt-1">Late</p>
+            </div>
+            <div className="bg-white p-4 rounded-3xl border border-slate-200 text-center shadow-sm">
+              <p className="text-red-600 font-black text-3xl">{student.totalAbsent}</p>
+              <p className="text-xs text-slate-600 font-bold uppercase tracking-wider mt-1">Absent</p>
+            </div>
+          </div>
+
+          <h2 className="text-lg font-bold text-slate-900 mb-3 ml-2 flex items-center gap-2">
+            <Trophy size={20} className="text-yellow-500" /> Achievements
+          </h2>
+          <div className="flex gap-4 overflow-x-auto pb-4 mb-8">
+            {student.badges.map((badge) => (
+              <div 
+                key={badge.id} 
+                className={`min-w-[120px] rounded-3xl p-4 flex flex-col items-center justify-center border shadow-sm relative overflow-hidden ${
+                  badge.unlocked 
+                    ? 'bg-white border-slate-200' 
+                    : 'bg-slate-50 border-dashed border-slate-300 opacity-60 grayscale'
+                }`}
+              >
+                {badge.unlocked ? (
+                  <span className="text-4xl mb-2">{badge.icon}</span>
+                ) : (
+                  <div className="h-10 w-10 bg-slate-200 rounded-full flex items-center justify-center mb-2">
+                    <Lock size={20} className="text-slate-400" />
+                  </div>
+                )}
+                <p className={`text-xs font-bold text-center ${badge.unlocked ? 'text-slate-800' : 'text-slate-500'}`}>
+                  {badge.name}
+                </p>
+                {!badge.unlocked && (
+                  <p className="text-[9px] text-center text-slate-400 mt-1 font-medium">{badge.req}</p>
+                )}
+              </div>
+            ))}
           </div>
 
           <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-6">
              <h3 className="font-bold text-slate-900 mb-4 flex items-center gap-2"><Camera size={18} className="text-slate-600"/> Select Picture</h3>
              <div className="flex gap-4 overflow-x-auto pb-2">
-               {["Milo", "Luna", "Leo", "Zoe", "Max"].map(seed => (
-                 <button key={seed} className="h-16 w-16 rounded-full overflow-hidden border-2 border-transparent hover:border-slate-300 transition-all">
-                   <img src={`https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&backgroundColor=b6e3f4`} alt="Avatar" className="w-full h-full object-cover" />
-                 </button>
-               ))}
+               {["Milo", "Luna", "Leo", "Zoe", "Max"].map(seed => {
+                 const url = `https://api.dicebear.com/7.x/adventurer/svg?seed=${seed}&backgroundColor=b6e3f4`;
+                 return (
+                   <button 
+                     key={seed} 
+                     onClick={() => setStudent({...student, avatar: url})}
+                     className={`h-16 w-16 rounded-full overflow-hidden border-2 transition-all flex-shrink-0 bg-slate-50 ${student.avatar === url ? `${activeTheme.border} scale-110 shadow-md` : 'border-transparent hover:border-slate-300'}`}
+                   >
+                     <img src={url} alt="Avatar option" className="w-full h-full object-cover" />
+                   </button>
+                 )
+               })}
              </div>
           </div>
 
           <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-200 mb-6">
             <h2 className="text-lg font-bold text-slate-900 mb-4 flex items-center gap-2"><Swords size={22} className={activeTheme.text} /> Invite a Rival</h2>
+            <p className="text-sm text-slate-600 font-medium mb-4">Type a classmate's username to challenge them to an attendance rivalry!</p>
             <div className="flex flex-col md:flex-row gap-3">
-              <input type="text" placeholder="Enter username (try 'john')" value={inviteUsername} onChange={e => setInviteUsername(e.target.value)} className="flex-1 bg-slate-50 border border-slate-300 rounded-xl py-3 px-4 text-slate-900 focus:outline-none focus:ring-2 focus:ring-slate-400" />
-              <button onClick={handleSendInvite} className={`${activeTheme.bg} text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2`}><UserPlus size={20} /> Send</button>
+              <div className="relative flex-1">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 font-bold">@</span>
+                <input type="text" placeholder="Enter username (try 'john')" value={inviteUsername} onChange={e => setInviteUsername(e.target.value)} className="w-full bg-slate-50 border border-slate-300 rounded-xl py-3 pl-8 pr-4 text-slate-900 font-medium focus:outline-none focus:ring-2 focus:ring-slate-400" />
+              </div>
+              <button onClick={handleSendInvite} className={`${activeTheme.bg} text-white font-bold px-6 py-3 rounded-xl flex items-center gap-2 hover:opacity-90 transition-opacity`}><UserPlus size={20} /> Send Invite</button>
             </div>
-            {inviteStatus === "success" && <div className="mt-3 flex items-center gap-2 text-emerald-800 bg-emerald-50 p-3 rounded-xl font-bold text-sm"><Check size={18} /> Sent!</div>}
-            {inviteStatus === "error" && <div className="mt-3 flex items-center gap-2 text-red-800 bg-red-50 p-3 rounded-xl font-bold text-sm"><X size={18} /> Username taken!</div>}
+            {inviteStatus === "success" && <div className="mt-3 flex items-center gap-2 text-emerald-800 bg-emerald-50 border border-emerald-200 p-3 rounded-xl font-bold text-sm"><Check size={18} /> Invite sent to @{inviteUsername}!</div>}
+            {inviteStatus === "error" && <div className="mt-3 flex items-center gap-2 text-red-800 bg-red-50 border border-red-200 p-3 rounded-xl font-bold text-sm"><X size={18} /> Username @{inviteUsername} is already taken or already a rival.</div>}
           </div>
 
           <h2 className="text-lg font-bold text-slate-900 mb-3 ml-2">Settings</h2>
@@ -380,15 +430,29 @@ export default function App() {
             <div className="p-5 border-b border-slate-100 flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="p-2 bg-slate-100 rounded-xl text-slate-700"><Palette size={20} /></div>
-                <span className="font-bold text-slate-800">Theme Color</span>
+                <div>
+                  <span className="font-bold text-slate-800 block">App Theme</span>
+                  <span className="text-xs text-slate-500 font-medium">Pick your accent color</span>
+                </div>
               </div>
               <div className="flex gap-2">
                 {Object.keys(themeColors).map(color => (
-                  <button key={color} onClick={() => setTheme(color)} className={`w-8 h-8 rounded-full ${themeColors[color].bg} ${theme === color ? 'scale-110 ring-2 ring-offset-2 ring-slate-900' : 'opacity-70'}`} />
+                  <button key={color} onClick={() => setTheme(color)} className={`w-8 h-8 rounded-full ${themeColors[color].bg} ${theme === color ? 'scale-110 ring-2 ring-offset-2 ring-slate-900' : 'opacity-70 hover:opacity-100 transition-all'}`} />
                 ))}
               </div>
             </div>
-            <button className="w-full flex items-center justify-between p-5 text-red-700 hover:bg-red-50"><span className="font-bold flex items-center gap-4"><LogOut size={20}/> Log Out</span></button>
+            
+            <button className="w-full flex items-center justify-between p-5 border-b border-slate-100 hover:bg-slate-50 transition-colors">
+              <div className="flex items-center gap-4">
+                <div className="p-2 bg-slate-100 rounded-xl text-slate-700"><Bell size={20} /></div>
+                <span className="font-bold text-slate-800">Notifications</span>
+              </div>
+              <ChevronRight size={20} className="text-slate-500" />
+            </button>
+
+            <button className="w-full flex items-center justify-between p-5 text-red-700 hover:bg-red-50 transition-colors">
+              <span className="font-bold flex items-center gap-4"><LogOut size={20}/> Log Out</span>
+            </button>
           </div>
         </main>
       )}
@@ -418,10 +482,7 @@ export default function App() {
                    <Camera size={48} className="text-slate-400 mb-4" />
                    <p className="text-slate-500 text-sm font-medium">Camera preview</p>
                    
-                   <button 
-                     onClick={simulateScan}
-                     className="absolute bottom-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold transition-colors shadow-lg"
-                   >
+                   <button onClick={simulateScan} className="absolute bottom-6 bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-2.5 rounded-xl font-bold transition-colors shadow-lg">
                      Simulate Scan
                    </button>
                 </div>
